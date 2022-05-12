@@ -8,11 +8,12 @@ router.get('/profile', (req, res) => {
 	res.render('private/profile', { user: req.session.currentUser });
 });
 
-router.get('/rooms/add', (req, res) => {
+router
+.route('/rooms/add')
+.get((req, res) => {
 	res.render('rooms/new-room');
-});
-
-router.post('/rooms/add', fileUploader.single('imageUrl'), (req, res) => {
+})
+.post(fileUploader.single('imageUrl'), (req, res) => {
 	//Get the user id from the session
 	const userId = req.session.currentUser._id;
 
@@ -20,7 +21,9 @@ router.post('/rooms/add', fileUploader.single('imageUrl'), (req, res) => {
 	const { name, description } = req.body;
 
 	//Get the image url from uploading
-	const imageUrl = req.file.path
+	//const imageUrl = req.file?.path
+	let imageUrl = undefined
+	if(req.file) imageUrl = req.file.path 
 
 	console.log(name, description, imageUrl);
 
@@ -32,7 +35,7 @@ router.post('/rooms/add', fileUploader.single('imageUrl'), (req, res) => {
 	})
 		.then((createdRoom) => {
 			console.log(createdRoom);
-			res.redirect('/private/rooms/add');
+			res.redirect('/rooms');
 		})
 		.catch((error) => {
 			console.log(error);
